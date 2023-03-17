@@ -1,0 +1,204 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+struct book {
+	string code_book;
+	string name;
+	string author;
+	string publish;
+	int price;
+	int numPaper;
+	int year;
+};
+
+// nhập 1 cuốn sách
+void Input(book& a) {
+	cout << "Nhap ma sach: ";
+	cin.ignore();
+	getline(cin, a.code_book);
+	cout << "Nhap ten sach: ";
+	getline(cin, a.name);
+	cout << "Nhap tac gia: ";
+	getline(cin, a.author);
+	cout << "Nhap nha xuat ban: ";
+	getline(cin, a.publish);
+	cout << "Nhap gia sach: ";
+	cin >> a.price;
+	cout << "Nhap so trang: ";
+	cin >> a.numPaper;
+	cout << "Nhap nam xuat ban: ";
+	cin >> a.year;
+}
+
+// Xuất 1 cuốn sách
+void Output(book a) {
+	cout << "Ma sach : " << a.code_book << endl;
+	cout << "Ten sach: " << a.name << endl;
+	cout << "Tac gia: " << a.author << endl;
+	cout << "Nha xuat ban: " << a.publish << endl;
+	cout << "Gia sach: " << a.price << endl;
+	cout << "So trang: " << a.numPaper << endl;
+	cout << "Nam xuat ban: " << a.year << endl;
+}
+
+// Nhập danh sách các cuốn sách
+void nhap(book*& b, int& n)
+{
+	cout << "Nhap so cuon sach: ";
+	cin >> n;
+	b = new book[n];
+	for (int i = 0; i < n; i++) {
+		cout << "Quyen " << i + 1 << " :" << endl;
+		Input(b[i]);
+	}
+}
+
+// Xuất danh sách các cuốn sách 
+void xuat(book* b, int n)
+{
+	for (int i = 0; i < n; i++) {
+		cout << "Quyen " << i + 1 << " :" << endl;
+		Output(b[i]);
+	}
+}
+
+// Giải phóng bộ nhớ
+void dele(book* b)
+{
+	delete[] b;
+}
+
+// Sắp xếp sách theo thư tự tăng dần ngày sản xuất
+void SapXepNSX(book* b, int n)
+{
+	cout << "Danh sach cac cuon sach the thu tu tang dan nam san xuat." << endl;
+	book c;
+	for (int i = 0; i < n; i++) {
+		for (int j = i + 1; j < n; j++) {
+			if (b[i].year > b[j].year) {
+				c = b[i];
+				b[i] = b[j];
+				b[j] = c;
+
+			}
+		}
+	}
+}
+
+// Sắp xếp sách theo thư tự giảm dần giá bán
+void SapXepGia(book* b, int n)
+{
+	book c;
+	for (int i = 0; i < n; i++) {
+		for (int j = i + 1; j < n; j++) {
+			if (b[i].price < b[j].price) {
+				c = b[i];
+				b[i] = b[j];
+				b[j] = c;
+
+			}
+		}
+	}
+}
+
+//Tìm quyển sách ít hơn k trang có giá bán cao nhất.
+void findBook(book* b, int n)
+{
+	int k;
+	SapXepGia(b, n);
+	cout << "Tim quyen sach co it hon k trang, co gia ban cao nhat." << endl;
+	cout << "Nhap so trang k: ";
+	cin >> k;
+	for (int i = 0; i < n; i++) {
+		if (b[i].numPaper < k) {
+			Output(b[i]);
+			return;
+		}
+		else {
+			cout << "Khong co gia tri thoa man!";
+			return;
+		}
+	}
+}
+
+// Thêm 1 quyển sách vào vị trí xác định
+void add(book* b, int& n) {
+	int pos;
+	cout << "Nhap vi tri can them: ";
+	cin >> pos;
+
+	for (int i = n; i > pos - 1; i--) {
+		b[i] = b[i - 1];
+	}
+	Input(b[pos - 1]);
+	n++;
+}
+
+//Xóa các quyển sách có năm xuất bản trước năm chỉ định ra khỏi mảng.
+void xoa(book* b, int n) {
+	int year;
+	cout << "Nhap nam chi dinh: ";
+	cin >> year;
+	for (int i = 0; i < n; i++) {
+		if (b[i].year > year) {
+			Output(b[i]);
+		}
+		else {
+			cout << "Khong co gia tri thoa man!";
+			return;
+		}
+	}
+}
+
+int menu(int& muc) {
+	cout << endl;
+	cout << "                    ============================================================== \n";
+	cout << "                          Cho MENU nhu sau, chon so tu 0 toi 9" << endl;
+	cout << "                          1. Xuat danh sach cac quyen sach." << endl;
+	cout << "                          2. Danh sach cac quyen sach the thu tu tang dan nam san xuat." << endl;
+	cout << "                          3. Quyen sach co it hon k trang, co gia ban cao nhat.  " << endl;
+	cout << "                          4. Them 1 quyen sach.  "<< endl;
+	cout << "                          5. Xoa cac quyen sach co nam san xuat truoc nam chi dinh."<< endl;
+	cout << "                    ============================================================== \n";
+	cout << "                                   Chon muc: ";
+	cin >> muc;
+	return muc;
+}
+
+int main() {
+	int muc = -1;
+	book a;
+	book* b;
+	int n;
+	nhap(b, n);
+	cout << "==================" << endl;
+	muc = menu(muc);
+	while (true) {
+		if (muc == 1) {
+			xuat(b, n);
+			muc = menu(muc);
+		}
+		else if (muc == 2) {
+			SapXepNSX(b, n);
+			xuat(b, n);
+			muc = menu(muc);
+		}
+		else if (muc == 3) {
+			findBook(b, n);
+			muc = menu(muc);
+		}
+		else if (muc == 4) {
+			add(b, n);
+			xuat(b, n);
+			muc = menu(muc);
+		}
+		else if (muc == 5) {
+			xoa(b, n);
+			muc = menu(muc);
+		}
+	}
+
+
+	
+}
